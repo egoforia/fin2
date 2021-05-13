@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid fixed>
+    <form [formGroup]="form" (ngSubmit)="login()">
+      <div cllass="input-group">
+        <ion-item>
+          <ion-input placeholder="Type your email" formControlName="email" type="email"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input placeholder="Type your password" formControlName="password" type="password"></ion-input>
+        </ion-item>
+      </div>
+
+      <ion-button type="submit" expand="block" [disabled]="form.invalid">Log in</ion-button>
+      <ion-button type="button" expand="block" [disabled]="form.invalid" (click)="signUp()">Sign in</ion-button>
+    </form>
+  </ion-grid>
+</ion-content>
