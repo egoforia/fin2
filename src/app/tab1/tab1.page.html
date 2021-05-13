@@ -13,5 +13,10 @@
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <ion-grid fixed>
+    <div *ngFor="let category of (categories | async)">
+      {{ category | json }}
+    </div>
+  </ion-grid>
+  
 </ion-content>

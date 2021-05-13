@@ -9,20 +9,20 @@ import { environment } from 'src/environments/environment';
 })
 export class SupabaseService {
 
-  private supabase: SupabaseClient;
+  public client: SupabaseClient;
   private _currentUser: BehaviorSubject<User> = new BehaviorSubject(null);
 
   constructor(
     private router: Router
   ) {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
+    this.client = createClient(environment.supabaseUrl, environment.supabaseKey, {
       autoRefreshToken: true,
       persistSession: true
     });
 
     this.loadUser();
 
-    this.supabase.auth.onAuthStateChange((event, session) => {
+    this.client.auth.onAuthStateChange((event, session) => {
       if (event == 'SIGNED_IN') {
         this._currentUser.next(session.user);
       }
@@ -30,7 +30,7 @@ export class SupabaseService {
   }
 
   async loadUser() {
-    const user = await this.supabase.auth.user();
+    const user = await this.client.auth.user();
  
     if (user) {
       this._currentUser.next(user);
@@ -43,7 +43,7 @@ export class SupabaseService {
 
   async signUp(credentials: { email, password }) {
     return new Promise(async (resolve, reject) => {
-      const { error, data } = await this.supabase.auth.signUp(credentials)
+      const { error, data } = await this.client.auth.signUp(credentials)
       if (error) {
         reject(error);
       } else {
@@ -54,7 +54,7 @@ export class SupabaseService {
 
   signIn(credentials: { email, password }) {
     return new Promise(async (resolve, reject) => {
-      const { error, data } = await this.supabase.auth.signIn(credentials)
+      const { error, data } = await this.client.auth.signIn(credentials)
       if (error) {
         reject(error);
       } else {
@@ -64,10 +64,10 @@ export class SupabaseService {
   }
  
   signOut() {
-    this.supabase.auth.signOut().then(_ => {
+    this.client.auth.signOut().then(_ => {
       // Clear up and end all active subscriptions!
-      this.supabase.getSubscriptions().map(sub => {
-        this.supabase.removeSubscription(sub);
+      this.client.getSubscriptions().map(sub => {
+        this.client.removeSubscription(sub);
       });
       
       this.router.navigateByUrl('/');
