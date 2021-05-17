@@ -20,6 +20,16 @@ export class TransactionsService {
     else { throw error; }
   }
 
+  async getByDate(date: string): Promise<Transaction[]> {
+    const { data, error } = await this.sbService.client
+      .from('transactions')
+      .select()
+      .eq('date', date);
+
+    if (data) { return data; } 
+    else { throw error; }
+  }
+
   async insert(transactions: Transaction[]): Promise<Transaction[]> {
     const { data, error } = await this.sbService.client
       .from('transactions')

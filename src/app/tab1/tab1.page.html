@@ -14,16 +14,19 @@
   </ion-header>
 
   <ion-grid fixed>
-    <ion-item *ngFor="let transaction of (transactions | async)">
-      {{ transaction | json }}
-    </ion-item>
+    
 
+    <ion-list *ngFor="let date of dates">
+      <ion-list-header>{{ date | date:'mediumDate' }}</ion-list-header>
+      <ion-item *ngFor="let transaction of (transactionsByDate[date] | async)">
+        <!-- {{ transaction | json }} -->
+        <app-transaction-item [transaction]="transaction"></app-transaction-item>
+      </ion-item>
+
+      <ion-button expand="block" fill="outline" (click)="presentTransactionFormModal(date)">
+        <ion-label>Adicionar</ion-label>
+      </ion-button>
+    </ion-list>
   </ion-grid>
-  <!-- fab placed to the top and end and on the top edge of the content overlapping header -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="presentTransactionFormModal()">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
   
 </ion-content>

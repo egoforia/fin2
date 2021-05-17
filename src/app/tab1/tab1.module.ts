@@ -7,6 +7,7 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 
 import { Tab1PageRoutingModule } from './tab1-routing.module';
 import { TransactionFormModalModule } from '../components/transaction-form-modal/transaction-form-modal.module';
+import { TransactionItemModule } from '../components/transaction-item/transaction-item.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { TransactionFormModalModule } from '../components/transaction-form-modal
     FormsModule,
     ExploreContainerComponentModule,
     Tab1PageRoutingModule,
-    TransactionFormModalModule
+    TransactionFormModalModule,
+    TransactionItemModule
   ],
   declarations: [Tab1Page]
 })

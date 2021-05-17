@@ -1,0 +1,18 @@
+<div class="component-wrapper">
+  <!-- {{ transaction | json }} -->
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <div slot="start">
+          {{ transaction.category_id }}
+        </div>
+        <div>
+          {{ transaction.amount | currency }}
+        </div>
+        <div slot="end">
+
+        </div>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</div>

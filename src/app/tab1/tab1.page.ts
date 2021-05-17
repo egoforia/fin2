@@ -18,26 +18,47 @@ export class Tab1Page implements OnInit {
     private modalCtrl: ModalController
   ) {}
 
-  transactions: Promise<Transaction[]>;
+  // transactions: Promise<Transaction[]>;
+
+  dates: string[] = [];
+  transactionsByDate: any = {};
 
   ngOnInit() {
     this.getAllTransactions();
+
+    for (let i = 0; i > -7; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      // date.setHours(0, 0, 0, 0);
+
+      const fDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+      this.dates.push(fDate);
+
+      this.getTransactionsByDate(fDate);
+    }
+
+    console.log(this.dates);
   }
 
   getAllTransactions() {
-    this.transactions = this.transactionsService.all();
+    // this.transactions = this.transactionsService.all();
   }
 
-  async presentTransactionFormModal() {
+  getTransactionsByDate(date: string) {
+    this.transactionsByDate[ date ] = this.transactionsService.getByDate(date);
+  }
+
+  async presentTransactionFormModal(date: string) {
     const modal = await this.modalCtrl.create({
       component: TransactionFormModalComponent,
       cssClass: '',
-      componentProps: {}
+      componentProps: { date }
     });
 
     modal.onWillDismiss()
       .then(data => {
-        this.getAllTransactions();
+        // this.getAllTransactions();
+        this.getTransactionsByDate(date);
       })
 
     modal.present();

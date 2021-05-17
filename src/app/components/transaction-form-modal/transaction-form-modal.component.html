@@ -1,17 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Nova transação</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
 <div class="modal-content">
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="date-wrapper">
+      {{ date | date:'mediumDate' }}
+    </div>
     <ion-item>
+      <ion-label position="stacked">Valor</ion-label>
       <ion-input placeholder="Valor" type="number" formControlName="amount"></ion-input>
     </ion-item>
-    <ion-item>
+    <!-- <ion-item>
       <ion-input placeholder="Data" type="date" formControlName="date"></ion-input>
+    </ion-item> -->
+    <ion-item>
+      <ion-label position="stacked">Categoria</ion-label>
+      <ion-select placeholder="Categoria" formControlName="category_id">
+        <ion-select-option *ngFor="let category of (categories | async)" [value]="category.id">
+          {{ category.emoji }} {{ category.name }}
+        </ion-select-option>
+      </ion-select>
     </ion-item>
-    <ion-select placeholder="Categoria" formControlName="category_id">
-      <ion-select-option *ngFor="let category of (categories | async)" [value]="category.id">
-        {{ category.emoji }} {{ category.name }}
-      </ion-select-option>
-    </ion-select>
-    <ion-button expand="block" type="submit">
+    <ion-button expand="block" type="submit" [disabled]="form.invalid">
       <ion-label>Salvar</ion-label>
     </ion-button>
   </form>

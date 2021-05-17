@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { Category } from 'src/app/api-interfaces/category';
@@ -25,13 +25,23 @@ export class TransactionFormModalComponent implements OnInit {
 
   categories: Promise<Category[]>;
 
+  @Input() date: string;
+
   ngOnInit() {
     this.categories = this.categoriesService.all();
 
     this.form = this.fb.group({
       amount:       [ null, [ Validators.required ] ],
-      date:         [ null, [ Validators.required ] ],
+      // date:         [ null, [ Validators.required ] ],
       category_id:  [ null, [ Validators.required ] ]
+    });
+  }
+
+  dismiss() {
+    // using the injected ModalController this page
+    // can "dismiss" itself and optionally pass back data
+    this.modalCtrl.dismiss({
+      'dismissed': true
     });
   }
 
@@ -41,8 +51,8 @@ export class TransactionFormModalComponent implements OnInit {
       loading.present();
 
       const transaction: Transaction = {
+        date: this.date,
         amount: this.form.controls.amount.value,
-        date: this.form.controls.date.value,
         category_id: this.form.controls.category_id.value
       };
 
