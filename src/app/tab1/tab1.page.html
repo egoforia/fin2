@@ -14,9 +14,16 @@
   </ion-header>
 
   <ion-grid fixed>
-    <div *ngFor="let category of (categories | async)">
-      {{ category | json }}
-    </div>
+    <ion-item *ngFor="let transaction of (transactions | async)">
+      {{ transaction | json }}
+    </ion-item>
+
   </ion-grid>
+  <!-- fab placed to the top and end and on the top edge of the content overlapping header -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="presentTransactionFormModal()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
   
 </ion-content>
