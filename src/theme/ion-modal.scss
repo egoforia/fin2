@@ -1,0 +1,12 @@
+ion-modal {
+  &.h-auto {
+    .modal-wrapper {
+      margin: var(--ion-margin);
+
+      .ion-page {
+        position: relative;
+        contain: content;
+      }
+    }
+  }
+}
