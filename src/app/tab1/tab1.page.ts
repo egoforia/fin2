@@ -22,6 +22,9 @@ export class Tab1Page implements OnInit {
 
   dates: string[] = [];
   transactionsByDate: any = {};
+  totalByDate: any = {};
+
+  newTransactionDate: string = '';
 
   ngOnInit() {
     this.getAllTransactions();
@@ -45,13 +48,26 @@ export class Tab1Page implements OnInit {
   }
 
   getTransactionsByDate(date: string) {
-    this.transactionsByDate[ date ] = this.transactionsService.getByDate(date);
+    this.transactionsByDate[ date ] = this.transactionsService.getByDate(date)
+      .then((transactions: Transaction[]) => {
+        this.totalByDate[ date ] = transactions.reduce((sum, current) => sum + current.amount, 0)
+        return transactions;
+      });
+  }
+
+  addTransactionToDate(date: string) {
+    this.newTransactionDate = date;
+  }
+
+  afterSaveTransactionToDate(date: string) {
+    this.newTransactionDate = '';
+    this.getTransactionsByDate(date);
   }
 
   async presentTransactionFormModal(date: string) {
     const modal = await this.modalCtrl.create({
       component: TransactionFormModalComponent,
-      cssClass: '',
+      cssClass: 'h-auto',
       componentProps: { date }
     });
 

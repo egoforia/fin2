@@ -14,7 +14,7 @@ export class TransactionsService {
   async all(): Promise<Transaction[]> {
     const { data, error } = await this.sbService.client
       .from('transactions')
-      .select();
+      .select('*');
 
     if (data) { return data; } 
     else { throw error; }
@@ -23,7 +23,7 @@ export class TransactionsService {
   async getByDate(date: string): Promise<Transaction[]> {
     const { data, error } = await this.sbService.client
       .from('transactions')
-      .select()
+      .select('*, categories(*)')
       .eq('date', date);
 
     if (data) { return data; } 

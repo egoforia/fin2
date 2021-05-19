@@ -5,5 +5,5 @@ export class Transaction {
   amount: number;
   date: Date | string;
   category_id: number;
-  category?: Category;
+  categories?: Category;
 }

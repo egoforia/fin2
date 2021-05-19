@@ -14,16 +14,25 @@
   </ion-header>
 
   <ion-grid fixed>
-    
-
     <ion-list *ngFor="let date of dates">
-      <ion-list-header>{{ date | date:'mediumDate' }}</ion-list-header>
-      <ion-item *ngFor="let transaction of (transactionsByDate[date] | async)">
-        <!-- {{ transaction | json }} -->
-        <app-transaction-item [transaction]="transaction"></app-transaction-item>
-      </ion-item>
+      <ion-item-divider [sticky]="true">
+        {{ date | date:'mediumDate' }} - {{ totalByDate[date] | currency }}
+      </ion-item-divider>
+      
+      <app-transaction-item 
+        *ngFor="let transaction of (transactionsByDate[date] | async)" [transaction]="transaction"
+        class="w-full">
+      </app-transaction-item>
 
-      <ion-button expand="block" fill="outline" (click)="presentTransactionFormModal(date)">
+      <app-transaction-item
+        *ngIf="newTransactionDate === date"
+        [date]="date"
+        state="edit"
+        class="w-full"
+        (afterSave)="afterSaveTransactionToDate(date)">
+      </app-transaction-item>
+
+      <ion-button expand="block" fill="outline" (click)="addTransactionToDate(date)">
         <ion-label>Adicionar</ion-label>
       </ion-button>
     </ion-list>

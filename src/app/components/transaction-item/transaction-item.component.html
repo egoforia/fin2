@@ -1,18 +1,72 @@
-<div class="component-wrapper">
-  <!-- {{ transaction | json }} -->
-  <ion-card>
-    <ion-card-content>
-      <ion-item>
-        <div slot="start">
-          {{ transaction.category_id }}
-        </div>
-        <div>
-          {{ transaction.amount | currency }}
-        </div>
-        <div slot="end">
+<div class="component-wrapper {{ state }}">
+  <ion-card color="light">
+    <ion-card-content color="light">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="w-full flex ion-justify-content-between ion-align-items-center">
+          <div>
+            <div class="text-lg" *ngIf="state === 'view'">{{ transaction.categories?.emoji }}</div>
 
+            <ion-item color="light" *ngIf="state === 'edit'">
+              <ion-label position="stacked">Categoria</ion-label>
+              <ion-select #selectCategory placeholder="?" formControlName="category_id">
+                <ion-select-option *ngFor="let category of (categories | async)" [value]="category.id">
+                  {{ category.emoji }} {{ category.name }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+          <div>
+            <div *ngIf="state === 'view'">{{ transaction.amount | currency }}</div>
+
+            <ion-item color="light" *ngIf="state === 'edit'">
+              <ion-label position="stacked">Valor</ion-label>
+              <ion-input 
+                placeholder="$X.XX" 
+                type="number" 
+                formControlName="amount" 
+                (ionChange)="amountChange($event)"
+                (ionBlur)="amountBlur($event)"
+                (ionFocus)="amountFocus($event)">
+              </ion-input>
+            </ion-item>
+          </div>
+          <div>
+            <ion-button *ngIf="state === 'view'" (click)="state = 'edit'" fill="clear" color="dark" shape="round" size="small">
+              <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+            </ion-button>
+            <ion-button *ngIf="state === 'edit' && !isChild" (click)="addChild()" fill="clear" color="dark" shape="round" size="small">
+              <ion-icon slot="icon-only" name="layers-outline"></ion-icon>
+            </ion-button>
+            <ion-button *ngIf="state === 'edit' && isChild" (click)="addChildToParent()" fill="clear" color="dark" shape="round" size="small">
+              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+            </ion-button>
+          </div>
         </div>
-      </ion-item>
+
+        <app-transaction-item
+          *ngFor="let child of children"
+          [transaction]="child"
+          [parent]="transaction"
+          [date]="date"
+          [state]="state"
+          (evAddChild)="addChild()"
+          (evAmountChange)="childAmountChange($event)">
+        </app-transaction-item>
+
+        <ion-row *ngIf="state === 'edit' && !isChild">
+          <ion-col>
+            <ion-button expand="block" fill="outline" (click)="state = 'view'">
+              <ion-label>Cancelar</ion-label>
+            </ion-button>
+          </ion-col>
+
+          <ion-col>
+            <ion-button type="submit" expand="block" [disabled]="form.invalid || isChildrenInvalid">
+              <ion-label>Salvar</ion-label>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </form>
     </ion-card-content>
   </ion-card>
 </div>

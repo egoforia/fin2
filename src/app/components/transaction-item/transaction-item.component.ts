@@ -1,17 +1,141 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IonItem, IonSelect, LoadingController } from '@ionic/angular';
+import { Category } from 'src/app/api-interfaces/category';
 import { Transaction } from 'src/app/api-interfaces/transaction';
+import { CategoriesService } from 'src/app/services/categories.service';
+import { TransactionsService } from 'src/app/services/transactions.service';
 
 @Component({
   selector: 'app-transaction-item',
   templateUrl: './transaction-item.component.html',
   styleUrls: ['./transaction-item.component.scss'],
 })
-export class TransactionItemComponent implements OnInit {
+export class TransactionItemComponent implements OnInit, AfterViewInit {
 
-  constructor() { }
+  constructor(
+    private categoriesService: CategoriesService,
+    private transactionsService: TransactionsService,
+    private fb: FormBuilder,
+    private loadingCtrl: LoadingController
+  ) { }
 
-  @Input() transaction: Transaction;
+  @ViewChild('selectCategory', { static: false }) selectCategory: IonSelect;
+  @ViewChildren(TransactionItemComponent) childrenList: QueryList<TransactionItemComponent>;
 
-  ngOnInit() {}
+  @Input() transaction = new Transaction();
+  @Input() parent: Transaction = null;
+  @Input() state: 'edit' | 'view' = 'view';
+  @Input() date: string;
 
+  @Output() afterSave = new EventEmitter<Transaction[]>();
+  @Output() evAddChild = new EventEmitter<void>();
+  @Output() evAmountChange = new EventEmitter<number>();
+
+  form: FormGroup;
+
+  categories: Promise<Category[]>;
+
+  children: Transaction[] = [];
+
+  _originalAmount: number;
+  _lockAmount = false;
+
+  ngOnInit() {
+    this.categories = this.categoriesService.all();
+
+    this.form = this.fb.group({
+      amount:       [ this.transaction.amount,      [ Validators.required ] ],
+      category_id:  [ this.transaction.category_id, [ Validators.required ] ]
+    });
+
+  }
+  
+  ngAfterViewInit() {
+    if (this.state === 'edit') {
+      // this.itemCategory.nativeElement.click();
+      this.selectCategory.open();
+    }
+
+    this.childrenList.changes.subscribe(childItem => {
+      console.log(childItem);
+    });
+  }
+
+  get amount(): AbstractControl {
+    return this.form.controls.amount;
+  }
+
+  get category_id(): AbstractControl {
+    return this.form.controls.category_id;
+  }
+
+  amountBlur(ev: any) {
+    this._lockAmount = true;
+  }
+
+  amountFocus(ev: any) {
+    this._lockAmount = false;
+  }
+
+  amountChange(ev: any) {
+    if (!this._lockAmount) {
+      this._originalAmount = parseFloat(ev.detail.value);
+    }
+    this.evAmountChange.emit(this._originalAmount);
+  }
+
+  childAmountChange(amount: number) {
+    const childrenAmount = this.childrenList.reduce((sum, current) => sum + current.amount.value, 0);
+    this.amount.patchValue(this._originalAmount - childrenAmount);
+    this.form.updateValueAndValidity();
+  }
+
+  addChild() {
+    this.children.push(new Transaction());
+  }
+
+  addChildToParent() {
+    this.evAddChild.emit();
+  }
+
+  get isChild(): boolean {
+    return this.parent !== null;
+  }
+
+  get isChildrenInvalid(): boolean {
+    return this.childrenList.some(el => el.form.invalid);
+  }
+
+  public getFormValue(): Transaction {
+    return {
+      date: this.date,
+      amount: this.form.controls.amount.value,
+      category_id: this.form.controls.category_id.value
+    };
+  }
+
+  async onSubmit() {
+    if (this.form.valid) {
+      const loading = await this.loadingCtrl.create({ message: '' });
+      loading.present();
+
+      const values: Transaction[] = [ this.getFormValue() ];
+
+      this.childrenList.forEach(child => {
+        values.push(child.getFormValue());
+      });
+
+      this.transactionsService.insert(values)
+        .then((transactions: Transaction[]) => {
+          this.afterSave.emit(transactions);
+        })
+        .catch(e => {
+
+        })
+        .finally(() => {
+          loading.dismiss();
+        });
+    }
+  }
 }
