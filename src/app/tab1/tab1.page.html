@@ -14,25 +14,31 @@
   </ion-header>
 
   <ion-grid fixed>
-    <ion-list *ngFor="let date of dates">
-      <ion-item-divider [sticky]="true">
+    <ion-list *ngFor="let date of dates" class="ion-no-padding">
+      <ion-item-divider color="light" [sticky]="true" class="text-xl ion-padding">
         {{ date | date:'mediumDate' }} - {{ totalByDate[date] | currency }}
       </ion-item-divider>
       
-      <app-transaction-item 
-        *ngFor="let transaction of (transactionsByDate[date] | async)" [transaction]="transaction"
-        class="w-full">
-      </app-transaction-item>
+      <div class="ion-margin-horizontal">
+        <app-transaction-item 
+          *ngFor="let transaction of (transactionsByDate[date] | async)" [transaction]="transaction"
+          class="w-full"
+          (afterSave)="afterSaveTransactionToDate(date)"
+          (evCancel)="onCancel()">
+        </app-transaction-item>
 
-      <app-transaction-item
-        *ngIf="newTransactionDate === date"
-        [date]="date"
-        state="edit"
-        class="w-full"
-        (afterSave)="afterSaveTransactionToDate(date)">
-      </app-transaction-item>
+        <app-transaction-item
+          *ngIf="newTransactionDate === date"
+          [date]="date"
+          state="edit"
+          class="w-full"
+          (afterSave)="afterSaveTransactionToDate(date)"
+          (evCancel)="onCancel()">
+        </app-transaction-item>
+      </div>
 
-      <ion-button expand="block" fill="outline" (click)="addTransactionToDate(date)">
+
+      <ion-button expand="block" fill="outline" class="ion-margin" (click)="addTransactionToDate(date)">
         <ion-label>Adicionar</ion-label>
       </ion-button>
     </ion-list>

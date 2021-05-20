@@ -31,6 +31,7 @@ export class TransactionItemComponent implements OnInit, AfterViewInit {
   @Output() afterSave = new EventEmitter<Transaction[]>();
   @Output() evAddChild = new EventEmitter<void>();
   @Output() evAmountChange = new EventEmitter<number>();
+  @Output() evCancel = new EventEmitter<void>();
 
   form: FormGroup;
 
@@ -49,6 +50,9 @@ export class TransactionItemComponent implements OnInit, AfterViewInit {
       category_id:  [ this.transaction.category_id, [ Validators.required ] ]
     });
 
+    if (this.transaction.date) {
+      this.date = this.transaction.date as string;
+    }
   }
   
   ngAfterViewInit() {
@@ -108,11 +112,30 @@ export class TransactionItemComponent implements OnInit, AfterViewInit {
   }
 
   public getFormValue(): Transaction {
-    return {
-      date: this.date,
-      amount: this.form.controls.amount.value,
-      category_id: this.form.controls.category_id.value
+    const t: Transaction = {
+      // id:           this.transaction.id,
+      date:         this.date || this.transaction.date,
+      amount:       this.form.controls.amount.value,
+      category_id:  this.form.controls.category_id.value
     };
+
+    if (this.transaction.id) {
+      t.id = this.transaction.id;
+    }
+
+    return t;
+  }
+
+  edit() {
+    this.state = 'edit';
+    this._originalAmount = this.transaction.amount;
+    this._lockAmount = true;
+  }
+
+  cancel() {
+    this.state = 'view';
+    this.children = [];
+    this.evCancel.emit();
   }
 
   async onSubmit() {
@@ -126,16 +149,26 @@ export class TransactionItemComponent implements OnInit, AfterViewInit {
         values.push(child.getFormValue());
       });
 
-      this.transactionsService.insert(values)
-        .then((transactions: Transaction[]) => {
-          this.afterSave.emit(transactions);
-        })
-        .catch(e => {
+      Promise.all([
+        this.transactionsService.insert(
+          values.filter(t => !t.id)
+        ),
+        this.transactionsService.upsert(
+          values.filter(t => t.id)
+        )
+      ])
+      .then((response: any) => {
+        console.log('promise.all', response);
 
-        })
-        .finally(() => {
-          loading.dismiss();
-        });
+        const transactions = [].concat(...response);
+        this.afterSave.emit(transactions);
+      })
+      .catch(e => {
+        console.error(e);
+      })
+      .finally(() => {
+        loading.dismiss();
+      });
     }
   }
 }

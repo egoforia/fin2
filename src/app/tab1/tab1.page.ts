@@ -64,6 +64,10 @@ export class Tab1Page implements OnInit {
     this.getTransactionsByDate(date);
   }
 
+  onCancel() {
+    this.newTransactionDate = '';
+  }
+
   async presentTransactionFormModal(date: string) {
     const modal = await this.modalCtrl.create({
       component: TransactionFormModalComponent,

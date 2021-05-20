@@ -1,10 +1,10 @@
 <div class="component-wrapper {{ state }}">
-  <ion-card color="light">
+  <ion-card color="light" class="border border-solid mx-0">
     <ion-card-content color="light">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="w-full flex ion-justify-content-between ion-align-items-center">
           <div>
-            <div class="text-lg" *ngIf="state === 'view'">{{ transaction.categories?.emoji }}</div>
+            <div class="text-lg w-10 ion-text-center" *ngIf="state === 'view'">{{ transaction.categories?.emoji }}</div>
 
             <ion-item color="light" *ngIf="state === 'edit'">
               <ion-label position="stacked">Categoria</ion-label>
@@ -31,14 +31,14 @@
             </ion-item>
           </div>
           <div>
-            <ion-button *ngIf="state === 'view'" (click)="state = 'edit'" fill="clear" color="dark" shape="round" size="small">
-              <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+            <ion-button *ngIf="state === 'view'" (click)="edit()" fill="clear" color="dark" shape="round" size="small" class="ion-no-padding w-10 h-10">
+              <ion-icon slot="icon-only" name="pencil-outline" class="text-lg"></ion-icon>
             </ion-button>
-            <ion-button *ngIf="state === 'edit' && !isChild" (click)="addChild()" fill="clear" color="dark" shape="round" size="small">
-              <ion-icon slot="icon-only" name="layers-outline"></ion-icon>
+            <ion-button *ngIf="state === 'edit' && !isChild" (click)="addChild()" fill="clear" color="dark" shape="round" size="small" class="ion-no-padding w-10 h-10">
+              <ion-icon slot="icon-only" name="layers-outline" class="text-lg"></ion-icon>
             </ion-button>
-            <ion-button *ngIf="state === 'edit' && isChild" (click)="addChildToParent()" fill="clear" color="dark" shape="round" size="small">
-              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+            <ion-button *ngIf="state === 'edit' && isChild" (click)="addChildToParent()" fill="clear" color="dark" shape="round" size="small" class="ion-no-padding w-10 h-10">
+              <ion-icon slot="icon-only" name="add-outline" class="text-lg"></ion-icon>
             </ion-button>
           </div>
         </div>
@@ -55,7 +55,7 @@
 
         <ion-row *ngIf="state === 'edit' && !isChild">
           <ion-col>
-            <ion-button expand="block" fill="outline" (click)="state = 'view'">
+            <ion-button expand="block" fill="outline" (click)="cancel()">
               <ion-label>Cancelar</ion-label>
             </ion-button>
           </ion-col>

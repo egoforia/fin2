@@ -38,4 +38,13 @@ export class TransactionsService {
     if (data) { return data; } 
     else { throw error; }
   }
+
+  async upsert(transactions: Transaction[]): Promise<Transaction[]> {
+    const { data, error } = await this.sbService.client
+      .from('transactions')
+      .upsert(transactions);
+
+    if (data) { return data; } 
+    else { throw error; }
+  }
 }
