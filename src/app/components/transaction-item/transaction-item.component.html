@@ -9,7 +9,7 @@
             <ion-item color="light" *ngIf="state === 'edit'">
               <ion-label position="stacked">Categoria</ion-label>
               <ion-select #selectCategory placeholder="?" formControlName="category_id">
-                <ion-select-option *ngFor="let category of (categories | async)" [value]="category.id">
+                <ion-select-option *ngFor="let category of categories" [value]="category.id">
                   {{ category.emoji }} {{ category.name }}
                 </ion-select-option>
               </ion-select>

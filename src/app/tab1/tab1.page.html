@@ -14,6 +14,23 @@
   </ion-header>
 
   <ion-grid fixed>
+    <!-- <canvas #weekChart></canvas> -->
+
+    <ion-row>
+      <ion-col size="6">
+        <app-date-range-chart range="last7days"></app-date-range-chart>
+      </ion-col>
+      <ion-col size="6">
+        <app-date-range-chart range="last30days"></app-date-range-chart>
+      </ion-col>
+    </ion-row>
+
+    <div class="flex overflow-x-auto py-3">
+      <div *ngFor="let sumByCategory of (sumByCategories | async)" class="px-2">
+        <span class="text-sm ion-text-nowrap">{{ sumByCategory.categories_emoji }} {{ sumByCategory.total | currency }}</span>
+      </div>
+    </div>
+
     <ion-list *ngFor="let date of dates" class="ion-no-padding">
       <ion-item-divider color="light" [sticky]="true" class="text-xl ion-padding">
         {{ date | date:'mediumDate' }} - {{ totalByDate[date] | currency }}

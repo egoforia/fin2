@@ -8,6 +8,7 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 import { Tab1PageRoutingModule } from './tab1-routing.module';
 import { TransactionFormModalModule } from '../components/transaction-form-modal/transaction-form-modal.module';
 import { TransactionItemModule } from '../components/transaction-item/transaction-item.module';
+import { DateRangeChartModule } from '../components/date-range-chart/date-range-chart.module';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { TransactionItemModule } from '../components/transaction-item/transactio
     ExploreContainerComponentModule,
     Tab1PageRoutingModule,
     TransactionFormModalModule,
-    TransactionItemModule
+    TransactionItemModule,
+    DateRangeChartModule
   ],
   declarations: [Tab1Page]
 })

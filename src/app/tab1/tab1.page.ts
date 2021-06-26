@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { Chart } from 'chart.js';
 import { Category } from '../api-interfaces/category';
-import { Transaction } from '../api-interfaces/transaction';
+import { ReportSumByCategory, Transaction } from '../api-interfaces/transaction';
 import { TransactionFormModalComponent } from '../components/transaction-form-modal/transaction-form-modal.component';
 import { CategoriesService } from '../services/categories.service';
 import { TransactionsService } from '../services/transactions.service';
@@ -18,17 +19,22 @@ export class Tab1Page implements OnInit {
     private modalCtrl: ModalController
   ) {}
 
+  
   // transactions: Promise<Transaction[]>;
-
+  
   dates: string[] = [];
   transactionsByDate: any = {};
   totalByDate: any = {};
 
+  sumByCategories: Promise<ReportSumByCategory[]>;
+  
   newTransactionDate: string = '';
 
-  ngOnInit() {
-    this.getAllTransactions();
+  /** Charts **/
+  // @ViewChild('weekChart') weekChart;
+  // weekChartBars: any;
 
+  ngOnInit() {
     for (let i = 0; i > -7; i--) {
       const date = new Date();
       date.setDate(date.getDate() + i);
@@ -40,11 +46,7 @@ export class Tab1Page implements OnInit {
       this.getTransactionsByDate(fDate);
     }
 
-    console.log(this.dates);
-  }
-
-  getAllTransactions() {
-    // this.transactions = this.transactionsService.all();
+    this.sumByCategories = this.transactionsService.report_sum_by_categories(this.dates[6], this.dates[0]);
   }
 
   getTransactionsByDate(date: string) {
@@ -84,4 +86,21 @@ export class Tab1Page implements OnInit {
     modal.present();
   }
 
+  /** Charts **/
+  createWeekChart() {
+    // const labels = this.transactionsByDate
+    //   .map(date => {
+    //     date.forEach()
+    //   });
+
+    // this.weekChartBars = new Chart(this.weekChart.nativeElement, {
+    //   type: 'bar',
+    //   data: {
+    //     labels,
+    //     datasets: [{
+
+    //     }]
+    //   }
+    // })
+  }
 }

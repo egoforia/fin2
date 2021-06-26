@@ -35,7 +35,7 @@ export class TransactionItemComponent implements OnInit, AfterViewInit {
 
   form: FormGroup;
 
-  categories: Promise<Category[]>;
+  categories: Category[];
 
   children: Transaction[] = [];
 
@@ -43,8 +43,6 @@ export class TransactionItemComponent implements OnInit, AfterViewInit {
   _lockAmount = false;
 
   ngOnInit() {
-    this.categories = this.categoriesService.all();
-
     this.form = this.fb.group({
       amount:       [ this.transaction.amount,      [ Validators.required ] ],
       category_id:  [ this.transaction.category_id, [ Validators.required ] ]
@@ -56,14 +54,18 @@ export class TransactionItemComponent implements OnInit, AfterViewInit {
   }
   
   ngAfterViewInit() {
-    if (this.state === 'edit') {
-      // this.itemCategory.nativeElement.click();
-      this.selectCategory.open();
-    }
-
     this.childrenList.changes.subscribe(childItem => {
       console.log(childItem);
     });
+
+    this.categoriesService.all()
+      .then((categories: Category[]) => {
+        this.categories = categories;
+        
+        if (this.state === 'edit') {
+          this.selectCategory.open();
+        }
+      });
   }
 
   get amount(): AbstractControl {
